@@ -18,6 +18,12 @@ export default async function handler(req, res) {
       })
     }
 
+    // Validar formato do WhatsApp
+    const whatsappRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/
+    if (!whatsappRegex.test(leadData.whatsapp) && leadData.whatsapp.length < 10) {
+      console.log('⚠️ WhatsApp com formato inválido:', leadData.whatsapp)
+    }
+
     // Gerar ID único para o lead
     const leadId = `LEAD_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
     
@@ -32,11 +38,11 @@ export default async function handler(req, res) {
       email: leadData.email || 'Não informado',
       
       // Respostas das perguntas trabalhistas
-      ultimaEmpresa: leadData.ultimaEmpresa || leadData.lastCompany,
-      statusTrabalho: leadData.statusTrabalho || leadData.workStatus,
-      recebeuDireitos: leadData.recebeuDireitos || leadData.receivedRights,
-      problemasTrabalho: leadData.problemasTrabalho || (leadData.workProblems ? leadData.workProblems.join(', ') : ''),
-      desejaConsultoria: leadData.desejaConsultoria || leadData.wantConsultation,
+      ultimaEmpresa: leadData.lastCompany || 'Não informado',
+      statusTrabalho: leadData.workStatus || 'Não informado',
+      recebeuDireitos: leadData.receivedRights || 'Não informado',
+      problemasTrabalho: Array.isArray(leadData.workProblems) ? leadData.workProblems.join(', ') : (leadData.workProblems || 'Não informado'),
+      desejaConsultoria: leadData.wantConsultation || 'Não informado',
       
       // Dados da vaga
       vaga: {

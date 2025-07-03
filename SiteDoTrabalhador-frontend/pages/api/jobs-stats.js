@@ -12,7 +12,13 @@ export default async function handler(req, res) {
 
     // Buscar todas as vagas combinadas
     const allJobsResponse = await fetch(`${req.headers.origin || 'http://localhost:3000'}/api/all-jobs-combined`);
-    const allJobsData = await allJobsResponse.json();
+    
+    let allJobsData;
+    try {
+      allJobsData = await allJobsResponse.json();
+    } catch (jsonError) {
+      throw new Error('Erro ao parsear resposta da API de vagas');
+    }
 
     if (!allJobsData.success || !allJobsData.data) {
       throw new Error('Erro ao buscar vagas');

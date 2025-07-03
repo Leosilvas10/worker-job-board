@@ -77,25 +77,34 @@ const LeadModal = ({ isOpen, onClose, jobData }) => {
     setIsSubmitting(true)
 
     try {
+      // Validar campos obrigatórios
+      if (!formData.name || !formData.whatsapp) {
+        alert('❌ Por favor, preencha nome e WhatsApp')
+        setIsSubmitting(false)
+        return
+      }
+
+      if (!formData.lgpdConsent) {
+        alert('❌ É necessário aceitar os termos de uso para continuar')
+        setIsSubmitting(false)
+        return
+      }
+
       // Preparar dados para envio
       const submissionData = {
         // Dados pessoais - campo "nome" com dados completos
-        nome: formData.name,
-        telefone: formData.whatsapp,
+        name: formData.name,
         whatsapp: formData.whatsapp,
         
         // Email removido conforme solicitado
         email: 'Não informado', // Email removido do formulário
         
         // Respostas da pesquisa - TODAS OBRIGATÓRIAS
-        ultimaEmpresa: formData.lastCompany,
-        statusTrabalho: formData.workStatus,
-        recebeuDireitos: formData.receivedRights,
-        problemasTrabalho: formData.workProblems.join(', '),
-        desejaConsultoria: formData.wantConsultation,
-        
-        // Campo experiência combinado (para compatibilidade)
-        experiencia: `Última empresa: ${formData.lastCompany}. Status: ${formData.workStatus}. Recebeu direitos: ${formData.receivedRights}. Problemas: ${formData.workProblems.join(', ')}. Quer consultoria: ${formData.wantConsultation}`,
+        lastCompany: formData.lastCompany || 'Não informado',
+        workStatus: formData.workStatus || 'Não informado',
+        receivedRights: formData.receivedRights || 'Não informado',
+        workProblems: formData.workProblems || [],
+        wantConsultation: formData.wantConsultation || 'Não informado',
         
         // Consentimento LGPD - SEMPRE OBRIGATÓRIO
         lgpdConsent: formData.lgpdConsent,
@@ -110,15 +119,7 @@ const LeadModal = ({ isOpen, onClose, jobData }) => {
         // Metadados adicionais
         fonte: 'Site do Trabalhador - Pesquisa Trabalhista',
         paginaOrigem: window.location.href,
-        userAgent: navigator.userAgent,
         timestamp: new Date().toISOString(),
-        dataChegada: new Date().toLocaleString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit', 
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
         source: 'Site do Trabalhador - Formulário Único'
       }
 

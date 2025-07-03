@@ -95,7 +95,11 @@ export default function Home() {
                     
                     <div className="space-y-2 mb-4 text-sm text-gray-600">
                       {job.company && (
-                        <p><strong>Empresa:</strong> {job.company}</p>
+                        <p><strong>Empresa:</strong> {
+                          typeof job.company === 'string' 
+                            ? job.company 
+                            : job.company.name || job.company
+                        }</p>
                       )}
                       {job.salary && (
                         <p><strong>Salário:</strong> {job.salary}</p>

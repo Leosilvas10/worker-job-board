@@ -20,7 +20,17 @@ export default async function handler(req, res) {
     try {
       console.log('📋 Buscando vagas internas...');
       const internalResponse = await fetch(`${baseUrl}/api/jobs`);
-      const internalData = await internalResponse.json();
+      
+      let internalData = { success: false, data: [] };
+      try {
+        if (internalResponse.ok) {
+          internalData = await internalResponse.json();
+        } else {
+          console.log(`⚠️ API interna retornou status ${internalResponse.status}`);
+        }
+      } catch (jsonError) {
+        console.log('⚠️ Erro ao parsear JSON da API interna, usando array vazio');
+      }
       
       if (internalData.success && internalData.data) {
         const internalJobs = internalData.data.map(job => ({
@@ -104,7 +114,17 @@ export default async function handler(req, res) {
     try {
       console.log('🔧 Buscando vagas de serviços gerais...');
       const servicesResponse = await fetch(`${baseUrl}/api/public-jobs-services`);
-      const servicesData = await servicesResponse.json();
+      
+      let servicesData = { success: false, jobs: [] };
+      try {
+        if (servicesResponse.ok) {
+          servicesData = await servicesResponse.json();
+        } else {
+          console.log(`⚠️ API de serviços retornou status ${servicesResponse.status}`);
+        }
+      } catch (jsonError) {
+        console.log('⚠️ Erro ao parsear JSON da API de serviços, usando array vazio');
+      }
       
       if (servicesData.success && servicesData.jobs) {
         const servicesJobs = servicesData.jobs.map(job => ({
