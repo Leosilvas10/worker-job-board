@@ -117,8 +117,12 @@ const AdminLayout = ({ children, title = 'Painel Administrativo' }) => {
         {/* Logo/Header */}
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-xl">🎯</span>
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center p-1">
+              <img 
+                src="/site do trabalhador.png" 
+                alt="Site do Trabalhador" 
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900">Admin Panel</h1>

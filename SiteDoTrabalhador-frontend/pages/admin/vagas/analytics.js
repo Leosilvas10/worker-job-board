@@ -1,33 +1,12 @@
-import { useState, us        // Fetch jobs for the table
-        const jobsResponse = await fetch('/api/all-jobs-combined')
-        const jobsResult = await jobsResponse.json()
-        
-        // Handle different response formats
-        let jobsData = []
-        if (Array.isArray(jobsResult)) {
-          jobsData = jobsResult
-        } else if (jobsResult.success && Array.isArray(jobsResult.data)) {
-          jobsData = jobsResult.data
-        } else if (jobsResult.jobs && Array.isArray(jobsResult.jobs)) {
-          jobsData = jobsResult.jobs
-        }
-        
-        setStats({
-          vagasMonitoradas: statsData.totalJobs || jobsData.length || 347,
-          candidaturas: statsData.applications || 89,
-          inativas: statsData.inactiveJobs || 23,
-          atualizacao: new Date().toLocaleString()
-        })
-        
-        setJobs(jobsData.slice(0, 10)) // Show first 10 jobsom 'react'
-import AdminLayout from '../../../src/components/Admin/AdminLayout'
+import { useState, useEffect } from 'react'
+import AdminLayout from '../../../src/components/Admin/AdminLayout.jsx'
 
 export default function AnalyticsVagas() {
   const [stats, setStats] = useState({
     vagasMonitoradas: 347,
     candidaturas: 89,
     inativas: 23,
-    atualizacao: new Date().toLocaleString()
+    atualizacao: new Date().toLocaleString('pt-BR')
   })
 
   const [jobs, setJobs] = useState([])
@@ -52,30 +31,37 @@ export default function AnalyticsVagas() {
         
         // Fetch jobs for the table
         const jobsResponse = await fetch('/api/all-jobs-combined')
-        let jobsData = {}
+        const jobsResult = await jobsResponse.json()
         
-        if (jobsResponse.ok) {
-          try {
-            jobsData = await jobsResponse.json()
-          } catch (error) {
-            console.error('Erro ao parsear jobs:', error)
-            jobsData = { data: [], jobs: [] }
-          }
+        // Handle different response formats
+        let jobsData = []
+        if (Array.isArray(jobsResult)) {
+          jobsData = jobsResult
+        } else if (jobsResult.success && Array.isArray(jobsResult.data)) {
+          jobsData = jobsResult.data
+        } else if (jobsResult.jobs && Array.isArray(jobsResult.jobs)) {
+          jobsData = jobsResult.jobs
         }
         
+        // Sanitize job data to ensure all values are strings or numbers
+        const sanitizedJobs = jobsData.map((job, index) => ({
+          id: job.id || index,
+          title: String(job.title || 'Título não disponível'),
+          company: String(job.company || 'Empresa'),
+          location: String(job.location || 'São Paulo, SP'),
+          salary: String(job.salary || 'A combinar'),
+          category: String(job.category || 'Categoria'),
+          status: job.status === 'active' ? 'active' : 'inactive'
+        }))
+        
         setStats({
-          vagasMonitoradas: statsData.totalJobs || 347,
+          vagasMonitoradas: statsData.totalJobs || jobsData.length || 347,
           candidaturas: statsData.applications || 89,
           inativas: statsData.inactiveJobs || 23,
-          atualizacao: new Date().toLocaleString()
+          atualizacao: new Date().toLocaleString('pt-BR')
         })
         
-        // Garantir que jobsData é um array antes de usar slice
-        const jobsArray = Array.isArray(jobsData) ? jobsData : 
-                         (jobsData.jobs && Array.isArray(jobsData.jobs)) ? jobsData.jobs :
-                         (jobsData.data && Array.isArray(jobsData.data)) ? jobsData.data : []
-        
-        setJobs(jobsArray.slice(0, 10)) // Show first 10 jobs
+        setJobs(sanitizedJobs.slice(0, 10)) // Show first 10 jobs
       } catch (error) {
         console.error('Erro ao carregar dados:', error)
         // Em caso de erro, definir valores padrão
@@ -83,7 +69,7 @@ export default function AnalyticsVagas() {
           vagasMonitoradas: 347,
           candidaturas: 89,
           inativas: 23,
-          atualizacao: new Date().toLocaleString()
+          atualizacao: new Date().toLocaleString('pt-BR')
         })
         setJobs([]) // Array vazio em caso de erro
       } finally {
@@ -198,19 +184,19 @@ export default function AnalyticsVagas() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {jobs.length > 0 ? jobs.map((job, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                  <tr key={job.id || index} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{job.title || 'Título não disponível'}</div>
-                      <div className="text-sm text-gray-500">{job.category || 'Categoria'}</div>
+                      <div className="text-sm font-medium text-gray-900">{job.title}</div>
+                      <div className="text-sm text-gray-500">{job.category}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {job.company || 'Empresa'}
+                      {job.company}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {job.location || 'São Paulo, SP'}
+                      {job.location}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {job.salary || 'A combinar'}
+                      {job.salary}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -221,7 +207,7 @@ export default function AnalyticsVagas() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
-                        onClick={() => handleSubstituir(job.id || index)}
+                        onClick={() => handleSubstituir(job.id)}
                         className="text-blue-600 hover:text-blue-900 mr-3"
                       >
                         Substituir

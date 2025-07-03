@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import AdminLayout from '../../../src/components/Admin/AdminLayout'
+import AdminLayout from '../../../src/components/Admin/AdminLayout.jsx'
 
 export default function AdminEmpresas() {
   const [empresas, setEmpresas] = useState([])
@@ -299,24 +299,6 @@ export default function AdminEmpresas() {
                 </ul>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </AdminLayout>
-  )
-}
-  }
-
-  const deleteEmpresa = async (empresaId) => {
-    if (!confirm('Tem certeza que deseja excluir esta solicitação de empresa?')) {
-      return
-    }
-
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/delete-lead?id=${empresaId}`, {
-        method: 'DELETE'
-      })
-      const data = await response.json()
           </div>
         </div>
       </div>

@@ -9,10 +9,58 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Em produção, buscar do banco de dados
-    // Para desenvolvimento, usar dados de exemplo + localStorage
+    // Buscar dados reais do backend
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+    
+    let leadsReais = []
+    try {
+      const backendResponse = await fetch(`${backendUrl}/api/leads`)
+      if (backendResponse.ok) {
+        const backendData = await backendResponse.json()
+        if (backendData.success && backendData.leads) {
+          leadsReais = backendData.leads.map(lead => ({
+            id: lead.id,
+            nome: lead.nome,
+            telefone: lead.telefone,
+            email: lead.email,
+            idade: lead.idade,
+            cidade: lead.cidade,
+            estado: lead.estado,
+            vaga: {
+              id: lead.vaga_id,
+              titulo: lead.vaga_titulo,
+              empresa: lead.empresa,
+              localizacao: `${lead.cidade}, ${lead.estado}`
+            },
+            profissional: {
+              trabalhouAntes: lead.trabalhou_antes === 'sim' || lead.trabalhou_antes === true,
+              ultimoEmprego: lead.ultimo_emprego,
+              tempoUltimoEmprego: lead.tempo_ultimo_emprego,
+              motivoDemissao: lead.motivo_demissao,
+              salarioAnterior: lead.salario_anterior,
+              experienciaAnos: lead.experiencia_anos || 0,
+              disponibilidade: lead.disponibilidade,
+              pretensaoSalarial: lead.pretensao_salarial
+            },
+            observacoes: lead.observacoes || lead.mensagem,
+            fonte: lead.fonte || 'site',
+            utm: {
+              source: lead.utm_source || '',
+              medium: lead.utm_medium || '',
+              campaign: lead.utm_campaign || ''
+            },
+            status: 'novo', // Status padrão para leads vindos do backend
+            criadoEm: lead.data_criacao || new Date().toISOString(),
+            contatado: false,
+            convertido: false
+          }))
+        }
+      }
+    } catch (error) {
+      console.log('Erro ao buscar leads do backend, usando dados de exemplo:', error.message)
+    }
 
-    // Dados de exemplo para demonstração
+    // Dados de exemplo para demonstração (caso o backend esteja indisponível)
     const exemploLeads = [
       {
         id: 1,
@@ -124,17 +172,18 @@ export default async function handler(req, res) {
       }
     ]
 
-    // Em desenvolvimento, também verificar localStorage
-    let leadsFromStorage = []
-    try {
-      // Simular leitura do localStorage (apenas no cliente)
-      leadsFromStorage = [] // Em produção real seria do banco
-    } catch (error) {
-      console.log('Erro ao ler localStorage:', error)
+    // Priorizar leads reais do backend, com dados de exemplo como fallback
+    let allLeads = []
+    
+    if (leadsReais.length > 0) {
+      // Se temos leads reais do backend, usar eles
+      allLeads = [...leadsReais]
+      console.log(`✅ ${leadsReais.length} leads reais carregados do backend`)
+    } else {
+      // Fallback para dados de exemplo se backend indisponível
+      allLeads = [...exemploLeads]
+      console.log(`⚠️ Usando ${exemploLeads.length} leads de exemplo (backend indisponível)`)
     }
-
-    // Combinar leads de exemplo com leads do storage
-    const allLeads = [...exemploLeads, ...leadsFromStorage]
 
     // Estatísticas dos leads
     const stats = {

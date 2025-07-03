@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import AdminLayout from '../../src/components/Admin/AdminLayout'
-import DashboardStats from '../../src/components/Admin/DashboardStats'
+import AdminLayout from '../../src/components/Admin/AdminLayout.jsx'
+import DashboardStats from '../../src/components/Admin/DashboardStats.jsx'
 
 export default function AdminDashboard() {
   const router = useRouter()

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import AdminLayout from '../../src/components/Admin/AdminLayout'
+import AdminLayout from '../../src/components/Admin/AdminLayout.jsx'
 
 export default function AdminLeads() {
   const [leads, setLeads] = useState([])
@@ -107,8 +107,12 @@ export default function AdminLeads() {
                 <p className="text-sm font-medium text-gray-600 mb-1">Taxa de Conversão</p>
                 <p className="text-3xl font-bold text-gray-900">{stats.conversion}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                <span className="text-2xl">🎯</span>
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center p-2">
+                <img 
+                  src="/site do trabalhador.png" 
+                  alt="Site do Trabalhador" 
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
           </div>

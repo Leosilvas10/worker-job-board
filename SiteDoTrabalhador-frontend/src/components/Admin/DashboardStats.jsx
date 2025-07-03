@@ -228,7 +228,11 @@ const DashboardStats = () => {
         <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-red-500">
           <div className="flex items-center">
             <div className="p-3 bg-red-100 rounded-lg">
-              <span className="text-2xl">🎯</span>
+              <img 
+                src="/site do trabalhador.png" 
+                alt="Site do Trabalhador" 
+                className="w-8 h-8 object-contain"
+              />
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Taxa de Conversão</p>
