@@ -6,6 +6,7 @@ import './database.js'; // Inicializar banco de dados
 import jobsStatsRouter from './api/jobs-stats.js';
 import leadsRouter from './api/leads.js';
 import vagasRouter from './api/vagas.js';
+import clearAllDataRouter from './api/clear-all-data.js';
 
 dotenv.config();
 
@@ -37,8 +38,9 @@ app.get('/', (req, res) => {
 app.use('/api/jobs-stats', jobsStatsRouter);
 app.use('/api/leads', leadsRouter);
 app.use('/api/vagas', vagasRouter);
+app.use('/api/clear-all-data', clearAllDataRouter);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`🚀 Backend rodando na porta ${PORT}`);
   console.log(`📊 API disponível em: http://localhost:${PORT}`);
@@ -49,4 +51,5 @@ app.listen(PORT, () => {
   console.log(`   📥 POST /api/vagas/import-from-frontend - Importar do frontend`);
   console.log(`   👥 GET  /api/leads - Listar leads`);
   console.log(`   📊 GET  /api/jobs-stats - Estatísticas`);
+  console.log(`   🗑️ DELETE /api/clear-all-data - Zerar todos os dados`);
 });

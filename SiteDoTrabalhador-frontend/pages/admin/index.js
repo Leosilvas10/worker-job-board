@@ -9,6 +9,45 @@ export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
+  const [isClearing, setIsClearing] = useState(false)
+
+  const handleClearAllData = async () => {
+    if (!confirm('⚠️ ATENÇÃO: Esta ação irá zerar TODOS os dados do sistema (leads, estatísticas, etc.). Esta operação é IRREVERSÍVEL!\n\nTem certeza que deseja continuar?')) {
+      return
+    }
+
+    if (!confirm('🚨 CONFIRMAÇÃO FINAL: Todos os leads e dados serão PERMANENTEMENTE DELETADOS. Confirma?')) {
+      return
+    }
+
+    setIsClearing(true)
+
+    try {
+      // Limpar dados do backend
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+      
+      // Fazer request para endpoint de limpeza (vamos criar)
+      const response = await fetch(`${backendUrl}/api/clear-all-data`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (response.ok) {
+        alert('✅ Todos os dados foram zerados com sucesso!')
+        // Forçar recarregamento da página para atualizar estatísticas
+        window.location.reload()
+      } else {
+        throw new Error('Erro no servidor')
+      }
+    } catch (error) {
+      console.error('Erro ao zerar dados:', error)
+      alert('❌ Erro ao zerar dados. Verifique se o backend está funcionando.')
+    }
+
+    setIsClearing(false)
+  }
 
   useEffect(() => {
     const checkAuth = () => {
@@ -78,8 +117,12 @@ export default function AdminDashboard() {
                 <button className="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
                   🔄 Atualizar
                 </button>
-                <button className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200">
-                  🗑️ Zerar Tudo
+                <button 
+                  onClick={handleClearAllData}
+                  disabled={isClearing}
+                  className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isClearing ? '⏳ Zerando...' : '🗑️ Zerar Tudo'}
                 </button>
               </div>
             </div>
