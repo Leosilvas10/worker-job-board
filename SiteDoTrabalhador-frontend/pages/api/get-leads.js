@@ -11,12 +11,17 @@ export default async function handler(req, res) {
   try {
     // Buscar dados reais do backend
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+    console.log('🔍 Tentando conectar ao backend:', backendUrl)
     
     let leadsReais = []
     try {
       const backendResponse = await fetch(`${backendUrl}/api/leads`)
+      console.log('📡 Status da resposta do backend:', backendResponse.status)
+      
       if (backendResponse.ok) {
         const backendData = await backendResponse.json()
+        console.log('✅', backendData.leads?.length, 'leads reais carregados do backend')
+        
         if (backendData.success && backendData.leads) {
           leadsReais = backendData.leads.map(lead => ({
             id: lead.id,
