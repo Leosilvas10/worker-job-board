@@ -67,7 +67,7 @@ const LeadModal = ({ isOpen, onClose, jobData }) => {
         utm_campaign: new URLSearchParams(window.location.search).get('utm_campaign') || ''
       }
 
-      const response = await fetch('/api/submit-candidatura', {
+      const response = await fetch('/api/submit-candidatura-new', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

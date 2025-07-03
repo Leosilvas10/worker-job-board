@@ -46,7 +46,6 @@ const JobCard = ({ job, onApplyClick }) => {
           </h3>
           <p className="text-govgray-600 text-sm mb-1 font-medium">{companyName}</p>
           <div className="flex items-center gap-3 text-xs text-govgray-500 font-medium">
-            <span>📍 {hiddenLocation}</span>
             <span>⏰ {timeAgo}</span>
           </div>
         </div>
@@ -85,11 +84,11 @@ const JobCard = ({ job, onApplyClick }) => {
         </div>
       )}
 
-      {/* Rodapé com fonte e botão - Estilo Gov.br */}
+      {/* Rodapé com botão - Estilo Gov.br */}
       <div className="border-t border-govgray-200 pt-4">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs text-govgray-500 font-medium">
-            📡 {source}
+          <span className="inline-block bg-gray-100 px-2 py-1 rounded text-xs text-gray-600">
+            📅 Recente
           </span>
           <span className="text-xs text-govgreen-600 font-bold">
             ✅ Verificada
@@ -104,11 +103,6 @@ const JobCard = ({ job, onApplyClick }) => {
           <span>Quero me candidatar</span>
           <span>🔗</span>
         </button>
-        
-        {/* Informação sobre localização - Estilo Gov.br */}
-        <p className="text-xs text-govgray-500 text-center mt-2 font-medium">
-          📍 Localização completa revelada após candidatura
-        </p>
       </div>
     </div>
   );

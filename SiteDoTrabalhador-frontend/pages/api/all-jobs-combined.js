@@ -68,6 +68,28 @@ export default async function handler(req, res) {
       console.error('❌ Erro ao buscar vagas externas:', error);
     }
 
+    // 2.1. Buscar vagas de empregos simples (FOCO NO SEU PÚBLICO)
+    try {
+      console.log('🎯 Buscando vagas de empregos simples...');
+      const simpleResponse = await fetch(`${baseUrl}/api/simple-jobs`);
+      const simpleData = await simpleResponse.json();
+      
+      if (simpleData.success && simpleData.data) {
+        const simpleJobs = simpleData.data.map(job => ({
+          ...job,
+          isExternal: true,
+          requiresLead: true,
+          priority: 'high' // Prioridade alta para empregos simples
+        }));
+        
+        allJobs.push(...simpleJobs);
+        sources.push('Empregos Simples');
+        console.log(`✅ ${simpleJobs.length} vagas de empregos simples carregadas`);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao buscar vagas de empregos simples:', error);
+    }
+
     // 3. Buscar vagas de tecnologia
     try {
       console.log('💻 Buscando vagas de tecnologia...');
@@ -153,8 +175,13 @@ export default async function handler(req, res) {
       }
     }
     
-    // Ordenar por data de publicação (mais recentes primeiro)
+    // Ordenar por prioridade (empregos simples primeiro) e depois por data
     uniqueJobs.sort((a, b) => {
+      // Primeiro critério: prioridade (empregos simples primeiro)
+      if (a.priority === 'high' && b.priority !== 'high') return -1;
+      if (a.priority !== 'high' && b.priority === 'high') return 1;
+      
+      // Segundo critério: data de publicação (mais recentes primeiro)
       const dateA = new Date(a.publishedDate || a.publishedAt || a.createdAt || 0);
       const dateB = new Date(b.publishedDate || b.publishedAt || b.createdAt || 0);
       return dateB - dateA;

@@ -52,95 +52,74 @@ export default async function handler(req, res) {
       })
     }
 
-    // Criar objeto do lead
+    // Preparar dados para enviar ao backend
     const leadData = {
-      id: Date.now(), // ID simples para desenvolvimento
-      
-      // Dados pessoais
-      nome: nome.trim(),
-      telefone: telefone.trim(),
-      email: email.trim().toLowerCase(),
-      idade: idade || null,
-      cidade: cidade || '',
-      estado: estado || '',
-      
-      // Dados da vaga
-      vaga: {
-        id: vagaId,
-        titulo: vagaTitulo,
-        empresa: vagaEmpresa,
-        localizacao: vagaLocalizacao
-      },
-      
-      // Dados profissionais (chave para análise)
-      profissional: {
-        trabalhouAntes: trabalhouAntes || false,
-        ultimoEmprego: ultimoEmprego || '',
-        tempoUltimoEmprego: tempoUltimoEmprego || '',
-        motivoDemissao: motivoDemissao || '',
-        salarioAnterior: salarioAnterior || '',
-        experienciaAnos: experienciaAnos || 0,
-        disponibilidade: disponibilidade || '',
-        pretensaoSalarial: pretensaoSalarial || ''
-      },
-      
-      // Metadados
-      observacoes: observacoes || '',
-      fonte: fonte || 'site',
-      utm: {
-        source: utm_source || '',
-        medium: utm_medium || '',
-        campaign: utm_campaign || ''
-      },
-      
-      // Status e timestamps
-      status: 'novo',
-      criadoEm: new Date().toISOString(),
-      atualizadoEm: new Date().toISOString(),
-      contatado: false,
-      convertido: false
+      nome,
+      telefone,
+      email,
+      empresa: vagaEmpresa,
+      mensagem: `CANDIDATURA - ${vagaTitulo}
+Vaga: ${vagaTitulo}
+Empresa: ${vagaEmpresa}
+Localização: ${vagaLocalizacao}
+ID da Vaga: ${vagaId}
+
+DADOS PESSOAIS:
+Idade: ${idade}
+Cidade: ${cidade}
+Estado: ${estado}
+
+EXPERIÊNCIA PROFISSIONAL:
+Trabalhou antes: ${trabalhouAntes}
+Último emprego: ${ultimoEmprego}
+Tempo no último emprego: ${tempoUltimoEmprego}
+Motivo da demissão: ${motivoDemissao}
+Salário anterior: ${salarioAnterior}
+Anos de experiência: ${experienciaAnos}
+
+PREFERÊNCIAS:
+Disponibilidade: ${disponibilidade}
+Pretensão salarial: ${pretensaoSalarial}
+
+OBSERVAÇÕES:
+${observacoes}
+
+TRACKING:
+Fonte: ${fonte}
+UTM Source: ${utm_source}
+UTM Medium: ${utm_medium}
+UTM Campaign: ${utm_campaign}`
     }
 
-    // Em produção, salvar no banco de dados
-    // Para desenvolvimento, vou simular salvamento
-    console.log('💾 Novo lead capturado:', {
-      nome: leadData.nome,
-      vaga: leadData.vaga.titulo,
-      motivoDemissao: leadData.profissional.motivoDemissao,
-      fonte: leadData.fonte
+    // Enviar para o backend
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+    const response = await fetch(`${backendUrl}/api/leads`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(leadData)
     })
 
-    // Simular salvamento no "banco de dados" (localStorage para desenvolvimento)
-    if (typeof window !== 'undefined') {
-      const existingLeads = JSON.parse(localStorage.getItem('captured_leads') || '[]')
-      existingLeads.push(leadData)
-      localStorage.setItem('captured_leads', JSON.stringify(existingLeads))
+    const result = await response.json()
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        success: false,
+        message: result.message || 'Erro ao salvar candidatura'
+      })
     }
 
-    // Em produção, você pode integrar com:
-    // - Google Sheets
-    // - CRM (HubSpot, Pipedrive, etc.)
-    // - Email marketing (Mailchimp, etc.)
-    // - WhatsApp Business API
-    // - Banco de dados (PostgreSQL, MongoDB, etc.)
-
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
-      message: 'Candidatura enviada com sucesso! Entraremos em contato em breve.',
-      data: {
-        leadId: leadData.id,
-        nome: leadData.nome,
-        vaga: leadData.vaga.titulo
-      }
+      message: 'Candidatura enviada com sucesso!'
     })
 
   } catch (error) {
-    console.error('❌ Erro ao processar candidatura:', error)
-    
-    return res.status(500).json({
+    console.error('Erro ao processar candidatura:', error)
+    res.status(500).json({
       success: false,
-      message: 'Erro interno do servidor. Tente novamente.',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: 'Erro interno do servidor'
     })
   }
 }

@@ -59,11 +59,86 @@ export default function AdminDashboard() {
   }
 
   return (
-    <AdminLayout user={user}>
+    <AdminLayout user={user} title="Dashboard Administrativo">
       <Head>
-        <title>Painel Administrativo - Site do Trabalhador</title>
+        <title>Dashboard Administrativo - Site do Trabalhador</title>
       </Head>
-      <DashboardStats />
+      
+      <div className="space-y-6">
+        {/* Estatísticas principais */}
+        <DashboardStats />
+        
+        {/* Seções adicionais */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Atividade Recente */}
+          <div className="bg-white rounded-lg shadow-sm border">
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-lg font-medium text-blue-600">Atividade Recente</h3>
+              <div className="flex space-x-2">
+                <button className="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                  🔄 Atualizar
+                </button>
+                <button className="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200">
+                  🗑️ Zerar Tudo
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">📊</div>
+                <h4 className="text-lg font-medium text-gray-900 mb-2">Nenhuma atividade recente</h4>
+                <p className="text-gray-500">Sistema limpo e pronto para uso</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Resumo do Sistema */}
+          <div className="bg-white rounded-lg shadow-sm border">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-blue-600">Resumo do Sistema</h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Status do Sistema</span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-green-600 font-medium">Online</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">API das Vagas</span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <span className="text-sm text-red-600 font-medium">Erro</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Último Reset</span>
+                <span className="text-sm text-gray-500">Nunca</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Vagas Cadastradas</span>
+                <span className="text-sm text-gray-900 font-medium">0 vagas</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Categoria Principal</span>
+                <span className="text-sm text-gray-500">N/A (0)</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-600">Estado dos Dados</span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-green-600">🧹 Sistema Limpo</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </AdminLayout>
   )
 }
